@@ -1,6 +1,7 @@
 import sys, os
 sys.path.append(os.pardir)
 
+import pickle
 import numpy as np
 from dataset.mnist import load_mnist
 from neuralnet import NeuralNet
@@ -40,9 +41,8 @@ for i in range(it_num):
         delta = net.loss(z, t_batch[j])
         net.backprop(delta)
         for l in range(1, net.depth+1):
-            name = 'layer{}'.format(l)
-            net.W[name] -= eta * net.dW[name] / batch_size
-            net.B[name] -= eta * net.dB[name] / batch_size
+            net.W[l] -= eta * net.dW[l] / batch_size
+            net.B[l] -= eta * net.dB[l] / batch_size
         net.flush()
 
     # register data per epoch
@@ -50,8 +50,8 @@ for i in range(it_num):
         # calculate accuracies
         train_acc = net.accuracy(x_train, t_train)
         test_acc = net.accuracy(x_test, t_test)
-        print(train_acc)
-        print(test_acc)
+        print('train_accuracy : {}'.format(train_acc))
+        print('test_accuracy : {}'.format(test_acc))
         # register data
         err_list.append(delta) 
         train_accuracy.append(train_acc)
@@ -59,22 +59,22 @@ for i in range(it_num):
 
 
 # output weights
-weights_file = open('weights', 'w')
-weights_file.write(net.W)
-weights_file.close()
+f = open('weights', 'wb')
+pickle.dump(net.W, f)
+f.close()
 
 # output err_list, train_accuracy_list, test_accuracy_list
-err_file = open('error', 'w')
-err_file.write(err_list)
-err_file.close()
+f = open('error', 'wb')
+pickle.dump(err_list, f)
+f.close()
 
-train_acc_file = open('train_accuracy', 'w')
-train_acc_file.write(train_accuracy)
-train_acc_file.close()
+f = open('train_accuracy', 'wb')
+pickle.dump(train_accuracy, f)
+f.close()
 
-test_acc_file = open('test_accuracy', 'w')
-test_acc_file.write(test_accuracy)
-test_acc_file.close()
+f = open('test_accuracy', 'wb')
+pickle.dump(test_accuracy, f)
+f.close()
 
 # print accuracy in the end
 print(test_accuracy.last)

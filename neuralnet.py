@@ -4,62 +4,64 @@ from layers import *
 class NeuralNet:
 
     def __init__(self, form, activ_func, loss_func, std = 0.01):
-
+        # depth of the neuralnet
         self.depth = len(form)-1
 
-        self.W = {}
-        self.B = {}
-        self.dW = {}
-        self.dB = {}
-
+        # settings of W, B, dW, dB
+        self.W = [None]*(self.depth+1)
+        self.B = [None]*(self.depth+1)
+        self.dW = [None]*(self.depth+1)
+        self.dB = [None]*(self.depth+1)
         for l in range(1, self.depth+1):
-            # settings of W, B, dW, dB
-            name = 'layer{}'.format(l)
-            self.W[name] = std * np.random.randn(form[l], form[l-1])
-            self.dW[name] = np.zeros((form[l], form[l-1]))
-            self.B[name] = std * np.random.randn(form[l])
-            self.dB[name] = np.zeros(form[l])
+            self.W[l] = std * np.random.randn(form[l], form[l-1])
+            self.dW[l] = np.zeros((form[l], form[l-1]))
+            self.B[l] = std * np.random.randn(form[l])
+            self.dB[l] = np.zeros(form[l])
 
-        self.Z = {}
-        self.U = {}
+        # initialization of Z(outputs of each activation layer)
+        self.Z = [None]*(self.depth+1)
+        # initialization of U(outputs of each affine layer)
+        self.U = [None]*(self.depth+1)
+
+        # settings of the activation function
         if activ_func == 'sigmoid':
             self.h = Sigmoid(1.0)
         elif activ_func == 'relu':
             self.h = ReLU()
+        else:
+            print("activate fanction must be 'sigmoid' or 'relu'")
+
+        # settings of the loss function
 
     def forprop(self, x):
 
         z = x
-        self.Z['layer0'] = z
+        self.Z[0] = z
         for l in range(1, self.depth+1):
-            name = 'layer{}'.format(l)
-            u = np.dot(z, self.W[name].T)
-            u += self.B[name]
-            self.U[name] = u
+            u = np.dot(z, self.W[l].T)
+            u += self.B[l]
+            self.U[l] = u
             z = self.h.forward(u)
-            self.Z[name] = z
+            self.Z[l] = z
 
         return z
         
     def loss(self, z, t):
 
         delta = (z - t) * 1
-        name = 'layer{}'.format(self.depth)
-        pre_name = 'layer{}'.format(self.depth-1)
-        self.dW[name] += np.dot(delta[:, np.newaxis], self.Z[pre_name][np.newaxis, :])
-        self.dB[name] += delta
+        dW = np.dot(delta[:, np.newaxis], self.Z[self.depth-1][np.newaxis, :])
+        self.dW[self.depth] += dW
+        self.dB[self.depth] += delta
 
         return delta
 
     def backprop(self, delta):
 
         for l in range(self.depth-1, 0, -1):
-            name = 'layer{}'.format(l)
-            post_name = 'layer{}'.format(l+1)
-            pre_name = 'layer{}'.format(l-1)
-            delta = self.h.backward(self.U[name]) * np.dot(delta, self.W[post_name])
-            self.dW[name] += np.dot(delta[:, np.newaxis], self.Z[pre_name][np.newaxis, :])
-            self.dB[name] += delta
+            delta = self.h.backward(self.U[l]) * np.dot(delta, self.W[l+1])
+            dW = np.dot(delta[:, np.newaxis], self.Z[l-1][np.newaxis, :])
+            self.dW[l] += dW
+            self.dB[l] += delta
 
     def accuracy(self, x, t):
         y = self.forprop(x)
@@ -72,6 +74,5 @@ class NeuralNet:
     def flush(self):
         # reset the data of dW and dB 
         for l in range(1, self.depth+1):
-            name = 'layer{}'.format(l)
-            self.dW[name] = np.zeros_like(self.dW[name])
-            self.dB[name] = np.zeros_like(self.dB[name])
+            self.dW[l] = np.zeros_like(self.dW[l])
+            self.dB[l] = np.zeros_like(self.dB[l])
