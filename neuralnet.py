@@ -48,7 +48,7 @@ class NeuralNet:
         
     def loss(self, z, t):
 
-        delta = (z - t) * 1
+        delta = (z - t) 
         dW = np.dot(delta[:, np.newaxis], self.Z[self.depth-1][np.newaxis, :])
         self.dW[self.depth] += dW
         self.dB[self.depth] += delta

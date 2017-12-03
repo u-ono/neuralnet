@@ -1,6 +1,3 @@
-#import sys, os
-#sys.path.append(os.pardir)
-
 import pickle
 from load_mnist import *
 import numpy as np
@@ -11,7 +8,7 @@ from neuralnet import NeuralNet
 
 # settings of the neuralnet
 form = [784, 50, 10]
-activ_func = 'sigmoid'
+activ_func = 'relu'
 loss_func = 'mean_squared'
 
 net = NeuralNet(form, activ_func, loss_func)
@@ -57,7 +54,6 @@ for i in range(it_num):
         train_accuracy.append(train_acc)
         test_accuracy.append(test_acc)
 
-
 # output weights
 f = open('weights', 'wb')
 pickle.dump(net.W, f)
@@ -75,6 +71,3 @@ f.close()
 f = open('test_accuracy', 'wb')
 pickle.dump(test_accuracy, f)
 f.close()
-
-# print accuracy in the end
-print(test_accuracy.last)
