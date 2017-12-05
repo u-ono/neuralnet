@@ -22,7 +22,7 @@ test_size = x_test.shape[0]
 net = NeuralNet(form, activ_func, loss_func)
 
 # settings of the weights parameter
-f = open('weights', 'rb')
+f = open('weights.pkl', 'rb')
 net.W = pickle.load(f)
 f.close()
 

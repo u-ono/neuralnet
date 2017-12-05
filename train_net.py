@@ -59,20 +59,20 @@ it_per_epoch = max(train_size/batch_size, 1)
 train()
 
 # output weights
-f = open('weights', 'wb')
+f = open('weights.pkl', 'wb')
 pickle.dump(net.W, f)
 f.close()
 
 # output err_list, train_accuracy_list, test_accuracy_list
-f = open('error', 'wb')
+f = open('error.pkl', 'wb')
 pickle.dump(err_list, f)
 f.close()
 
-f = open('train_accuracy', 'wb')
+f = open('train_accuracy.pkl', 'wb')
 pickle.dump(train_accuracy, f)
 f.close()
 
-f = open('test_accuracy', 'wb')
+f = open('test_accuracy.pkl', 'wb')
 pickle.dump(test_accuracy, f)
 f.close()
 
