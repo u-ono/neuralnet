@@ -1,5 +1,6 @@
 import numpy as np
 from functions import *
+import numba
 
 class Affine:
 
@@ -37,34 +38,56 @@ class Affine:
         
 class Sigmoid:
 
-    def __init__(self, a):
+    def __init__(self, width, a):
+        self.z = None
         self.a = a
+        self.width = width
 
     def forward(self, u):
         z = sigmoid(u, self.a)
+        self.z = z
         return z
         
     def backward(self, u):
         grad = sigmoid_diff(u, self.a)
         return grad
+        
+    @numba.jit
+    def dZ(self):
+        dZ = np.zeros((self.width, self.width))
+        for k in range(self.width):
+            dZ[k, k] = self.a * self.z[k] * (1 - self.z[k])
+        return dZ
 
 class ReLU:
 
-    def __init__(self):
+    def __init__(self, width):
         self.z = None
+        self.u = None
+        self.width = width
 
     def forward(self, u):
+        self.u = u
         z = relu(u)
+        self.z = z
         return z
 
     def backward(self, u):
         grad = relu_diff(u)
         return grad
 
+    def dZ(self):
+        if self.u > 0:
+            dZ = np.identity(self.width)
+        else:
+            dZ = np.zeros((self.width, self.width))
+        return dZ
+
 class Softmax:
 
-    def __init__(self):
+    def __init__(self, width):
         self.z = None
+        self.width = width
         
     def forward(self, u):
         z = softmax(u)
@@ -76,10 +99,21 @@ class Softmax:
         err = delta * softmax_diff
         return err
 
+    @numba.jit
+    def dZ(self):
+        dZ = np.zeros((self.width, self.width))
+        for k in range(self.width):
+            for i in range(self.width):
+                dZ[k, i] = - self.z[i] * self.z[k]
+        for k in range(self.width):
+            dZ[k, k] = self.z[k] * (1 - self.z[k])
+        return dZ 
+
 class Identity:
 
-    def __init__(self):
+    def __init__(self, width):
         self.z = None
+        self.width = width
 
     def forward(self, u):
         self.z = u
@@ -88,6 +122,9 @@ class Identity:
     def backward(self, delta):
         err = delta
         return err
+
+    def dZ(self):
+        return np.identity(self.width)
 
 class CrossEntropyError:
 

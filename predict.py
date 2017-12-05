@@ -13,8 +13,8 @@ def img_show(img):
 
 # settings of the neuralnet
 form = [784, 50, 10]
-activ_func = 'relu'
-loss_func = 'mean_squared'
+activ_func = ['relu', 'softmax']
+loss_func = 'cross_entropy'
 
 # settings of the batch prediction
 test_size = x_test.shape[0]
@@ -35,11 +35,17 @@ def check_prediction():
     print('label : {}'.format(label))
     print('prediction : {}'.format(z))
     
-def prediction_accuracy(batch_size=100):
+def prediction_accuracy(it_num=100, batch_size=100):
+    acc = 0
 
-    # extraction of the batch data
-    batch_mask = np.random.choice(test_size, batch_size, replace=False)
-    x_batch = x_test[batch_mask]
-    t_batch = t_test[batch_mask]
+    for i in range(it_num):
+        # extraction of the batch data
+        batch_mask = np.random.choice(test_size, batch_size, replace=False)
+        x_batch = x_test[batch_mask]
+        t_batch = t_test[batch_mask]
 
-    print('accuracy : {}'.format(net.accuracy(x_batch, t_batch)))
+        for j in range(batch_size):
+            acc += net.accuracy(x_batch, t_batch)
+
+    acc /= it_num
+    print('prediction accuracy : {}'.format(acc))
