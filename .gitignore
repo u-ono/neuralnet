@@ -1,2 +1,2 @@
-mnist.pkl
+*.pkl
 __pycache__
