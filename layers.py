@@ -5,11 +5,13 @@ import numba
 class Sigmoid:
 
     def __init__(self, width, a):
+        self.u = None
         self.z = None
         self.a = a
         self.width = width
 
     def forward(self, u):
+        self.u = u
         z = sigmoid(u, self.a)
         self.z = z
         return z
@@ -28,8 +30,8 @@ class Sigmoid:
 class ReLU:
 
     def __init__(self, width):
-        self.z = None
         self.u = None
+        self.z = None
         self.width = width
 
     def forward(self, u):
@@ -52,10 +54,12 @@ class ReLU:
 class Softmax:
 
     def __init__(self, width):
+        self.u = None
         self.z = None
         self.width = width
         
     def forward(self, u):
+        self.u = u
         z = softmax(u)
         self.z = z
         return z
@@ -78,10 +82,12 @@ class Softmax:
 class Identity:
 
     def __init__(self, width):
+        self.u = None
         self.z = None
         self.width = width
 
     def forward(self, u):
+        self.u = u
         self.z = u
         return u
 
