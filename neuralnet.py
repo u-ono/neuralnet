@@ -42,7 +42,13 @@ class NeuralNet:
         self.U = [None]*(self.depth+1)
 
         # settings of the loss function
-        self.loss_func = loss_func
+        if loss_func == 'mean_squared':
+            self.loss_func = MeanSquaredError()
+        elif loss_func == 'cross_entropy':
+            self.loss_func = CrossEntropyError()
+        else:
+            print("loss function error!")
+            return
 
     def forprop(self, x):
 
@@ -58,21 +64,20 @@ class NeuralNet:
         return z
         
     def loss(self, z, t):
+        return self.loss_func.forward(z, t)
 
-        if (self.last_layer == 'softmax' and self.loss_func == 'cross_entropy') or (self.last_layer == 'identity' and self.loss_func == 'mean_squared'):
+    def backprop(self, z, t):
+
+        if (self.last_layer == 'softmax' and self.loss_func.name == 'cross_entropy') or (self.last_layer == 'identity' and self.loss_func.name == 'mean_squared'):
             # calculate delta simply
-            delta = (z - t) 
+            delta = z - t 
         else:
             # delta_i = SUM{k}(dE/dz_k * dz_k/du_i)
-            delta = np.dot(self.dE(z, t), self.h[self.depth].dZ())
+            delta = np.dot(self.loss_func.dE, self.h[self.depth].dZ())
 
         dW = np.dot(delta[:, np.newaxis], self.Z[self.depth-1][np.newaxis, :])
         self.dW[self.depth] += dW
         self.dB[self.depth] += delta
-
-        return delta
-
-    def backprop(self, delta):
 
         for l in range(self.depth-1, 0, -1):
             delta = self.h[l].backward(self.U[l]) * np.dot(delta, self.W[l+1])
@@ -93,12 +98,3 @@ class NeuralNet:
         for l in range(1, self.depth+1):
             self.dW[l] = np.zeros_like(self.dW[l])
             self.dB[l] = np.zeros_like(self.dB[l])
-
-    def dE(self, z, t):
-        # calculate dE/dz_k
-        if self.loss_func == 'mean_squared':
-            return (z - t)
-        elif self.loss_func == 'cross_entropy':
-            return (z / t)
-        else:
-            return 1

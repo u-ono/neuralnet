@@ -12,8 +12,8 @@ def train():
     
         for j in range(batch_size):
             z = net.forprop(x_batch[j])
-            delta = net.loss(z, t_batch[j])
-            net.backprop(delta)
+            loss = net.loss(z, t_batch[j])
+            net.backprop(z, t_batch[j])
             for l in range(1, net.depth+1):
                 net.W[l] -= eta * net.dW[l] / batch_size
                 net.B[l] -= eta * net.dB[l] / batch_size
@@ -27,7 +27,7 @@ def train():
             print('train_accuracy : {}'.format(train_acc))
             print('test_accuracy : {}'.format(test_acc))
             # register data
-            err_list.append(delta) 
+            err_list.append(loss) 
             train_accuracy.append(train_acc)
             test_accuracy.append(test_acc)
 
@@ -36,9 +36,9 @@ def train():
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
 
 # settings of the neuralnet
-form = [784, 50, 10]
-activ_func = ['relu', 'sigmoid']
-loss_func = 'mean_squared'
+form = [784, 10]
+activ_func = ['softmax']
+loss_func = 'cross_entropy'
 
 net = NeuralNet(form, activ_func, loss_func)
 
@@ -75,4 +75,3 @@ f.close()
 f = open('test_accuracy.pkl', 'wb')
 pickle.dump(test_accuracy, f)
 f.close()
-

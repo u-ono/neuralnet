@@ -28,6 +28,7 @@ def softmax(x):
 def mean_squared_error(y, t):
     return 0.5 * np.sum((y-t)**2)
 
+'''
 def cross_entropy_error(y, t):
 
     if t.shape != y.shape:
@@ -42,3 +43,7 @@ def cross_entropy_error(y, t):
     batch_size = y.shape[0]
 
     return -np.sum(np.log(y)*t) / batch_size
+'''
+
+def cross_entropy_error(y, t):
+    return - np.sum(t * np.log(y))
