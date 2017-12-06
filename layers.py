@@ -16,8 +16,8 @@ class Sigmoid:
         self.z = z
         return z
         
-    def backward(self, u):
-        grad = sigmoid_diff(u, self.a)
+    def diff(self):
+        grad = sigmoid_diff(self.u, self.a)
         return grad
         
     @numba.jit
@@ -40,8 +40,8 @@ class ReLU:
         self.z = z
         return z
 
-    def backward(self, u):
-        grad = relu_diff(u)
+    def diff(self):
+        grad = relu_diff(self.u)
         return grad
 
     def dZ(self):
@@ -63,11 +63,6 @@ class Softmax:
         z = softmax(u)
         self.z = z
         return z
-
-    def backward(self, delta):
-        softmax_diff = self.z * (1 - self.z)
-        err = delta * softmax_diff
-        return err
 
     @numba.jit
     def dZ(self):
@@ -91,9 +86,8 @@ class Identity:
         self.z = u
         return u
 
-    def backward(self, delta):
-        err = delta
-        return err
+    def diff(self):
+        return np.ones_like(self.u)
 
     def dZ(self):
         return np.identity(self.width)

@@ -65,7 +65,7 @@ class NeuralNet:
         self.dW[self.depth] += dW
         self.dB[self.depth] += delta
         for l in range(self.depth-1, 0, -1):
-            delta = self.h[l].backward(self.h[l].u) * np.dot(delta, self.W[l+1])
+            delta = self.h[l].diff() * np.dot(delta, self.W[l+1])
             dW = np.dot(delta[:, np.newaxis], self.h[l-1].z[l-1])
             self.dW[l] += dW
             self.dB[l] += delta
