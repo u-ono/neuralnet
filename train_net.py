@@ -14,10 +14,10 @@ def train():
             z = net.forprop(x_batch[j])
             loss = net.loss(z, t_batch[j])
             net.backprop(z, t_batch[j])
-            for l in range(1, net.depth+1):
-                net.W[l] -= eta * net.dW[l] / batch_size
-                net.B[l] -= eta * net.dB[l] / batch_size
-            net.flush()
+        for l in range(1, net.depth+1):
+            net.W[l] -= eta * net.dW[l] / batch_size
+            net.B[l] -= eta * net.dB[l] / batch_size
+        net.flush()
     
         # register data per epoch
         if i % it_per_epoch == 0:
@@ -43,7 +43,7 @@ loss_func = 'cross_entropy'
 net = NeuralNet(form, activ_func, loss_func)
 
 # settings of the batch training
-it_num = 10000 # number of iterations
+it_num = 12000 # number of iterations
 train_size = x_train.shape[0]
 batch_size = 100
 eta = 0.1 # learning rate
