@@ -37,13 +37,13 @@ def train():
 
 # settings of the neuralnet
 form = [784, 50, 10]
-activ_func = ['relu', 'sigmoid']
-loss_func = 'mean_squared'
+activ_func = ['relu', 'softmax']
+loss_func = 'cross_entropy'
 
 net = NeuralNet(form, activ_func, loss_func)
 
 # settings of the batch training
-it_num = 10000 # number of iterations
+it_num = 12000 # number of iterations
 train_size = x_train.shape[0]
 batch_size = 100
 eta = 0.1 # learning rate
