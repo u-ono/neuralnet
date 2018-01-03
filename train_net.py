@@ -36,8 +36,8 @@ def train():
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
 
 # settings of the neuralnet
-form = [784, 50, 10]
-activ_func = ['relu', 'softmax']
+form = [784, 100, 50, 10]
+activ_func = ['relu', 'relu', 'softmax']
 loss_func = 'cross_entropy'
 
 net = NeuralNet(form, activ_func, loss_func)
