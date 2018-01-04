@@ -40,7 +40,7 @@ form = [784, 100, 50, 10]
 activ_func = ['sigmoid', 'sigmoid', 'softmax']
 loss_func = 'cross_entropy'
 
-net = NeuralNet(form, activ_func, loss_func, 0.01)
+net = NeuralNet(form, activ_func, loss_func, 0.1)
 
 # settings of the batch training
 it_num = 30000 # number of iterations
