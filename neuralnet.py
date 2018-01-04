@@ -3,7 +3,7 @@ from layers import *
 
 class NeuralNet:
 
-    def __init__(self, form, activ_func, loss_func, std = 0.01):
+    def __init__(self, form, activ_func, loss_func, std):
         # depth of the neuralnet
         self.depth = len(form)-1
 
@@ -18,10 +18,17 @@ class NeuralNet:
         self.h = [None]*(self.depth+1)
 
         for l in range(1, self.depth+1):
+            # settings of std
+            if std == 'xavier':
+                std_dev = 1.0 / np.sqrt(form[l-1])
+            elif std == 'he':
+                std_dev = 1.0 / np.sqrt(form[l-1]) * np.sqrt(2)
+            else:
+                std_dev = std
             # settings of each layer's W and B
-            self.W[l] = std * np.random.randn(form[l], form[l-1])
+            self.W[l] = std_dev * np.random.randn(form[l], form[l-1])
             self.dW[l] = np.zeros((form[l], form[l-1]))
-            self.B[l] = std * np.random.randn(form[l])
+            self.B[l] = std_dev * np.random.randn(form[l])
             self.dB[l] = np.zeros(form[l])
             # settings of the activation function
             if activ_func[l-1] == 'sigmoid':
