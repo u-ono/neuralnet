@@ -43,7 +43,7 @@ loss_func = 'cross_entropy'
 net = NeuralNet(form, activ_func, loss_func)
 
 # settings of the batch training
-it_num = 12000 # number of iterations
+it_num = 18000 # number of iterations
 train_size = x_train.shape[0]
 batch_size = 100
 eta = 0.1 # learning rate
