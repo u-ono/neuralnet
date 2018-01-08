@@ -1,5 +1,6 @@
 import numpy as np
 from layers import *
+from numba import jit
 
 class NeuralNet:
 
@@ -51,6 +52,7 @@ class NeuralNet:
         # settings of the loss function
         self.loss_func = loss_func
 
+    @jit
     def forprop(self, x):
 
         z = x
@@ -64,6 +66,7 @@ class NeuralNet:
 
         return z
         
+    @jit
     def loss(self, z, t):
 
         if (self.last_layer == 'softmax' and self.loss_func == 'cross_entropy') or (self.last_layer == 'identity' and self.loss_func == 'mean_squared'):
@@ -79,6 +82,7 @@ class NeuralNet:
 
         return delta
 
+    @jit
     def backprop(self, delta):
 
         for l in range(self.depth-1, 0, -1):

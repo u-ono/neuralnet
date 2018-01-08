@@ -3,7 +3,7 @@
 import numpy as np
 from numba import jit
 
-@jit('f8[:, :](f8[:, :],i8)')
+@jit('f4[:, :](f4[:, :],i8)')
 def put_noise(data, d):
     ret = np.zeros_like(data)
     for i in range(data.shape[0]):

@@ -2,6 +2,7 @@ import pickle
 from load_mnist import *
 import numpy as np
 from neuralnet import NeuralNet
+from put_noise import *
 
 def train():
     for i in range(it_num):
@@ -35,12 +36,17 @@ def train():
 # read the dataset
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
 
+# put the noise
+print('putting the noise ...')
+x_train = put_noise(x_train, 25)
+x_test = put_noise(x_test, 25)
+
 # settings of the neuralnet
 form = [784, 100, 50, 10]
 activ_func = ['sigmoid', 'sigmoid', 'softmax']
 loss_func = 'cross_entropy'
 
-net = NeuralNet(form, activ_func, loss_func, 0.1)
+net = NeuralNet(form, activ_func, loss_func, 'he')
 
 # settings of the batch training
 it_num = 30000 # number of iterations
